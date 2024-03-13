@@ -1,0 +1,34 @@
+name: Flutter CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: subosito/flutter-action@v1
+        with:
+          flutter-version: '3.3.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Unit Tests
+        run: flutter test test/unit_test/
+
+      - name: Run Integration Tests
+        run: flutter test integration_test
+
+      - name: Build Web
+        run: flutter build web
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
