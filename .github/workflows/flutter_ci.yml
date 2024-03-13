@@ -15,9 +15,12 @@ jobs:
           cache-key: 'flutter-:os:-:channel:-:version:-:arch:-:hash:'
           cache-path: '${{ runner.tool_cache }}/flutter/:channel:-:version:-:arch:'
       - run: flutter --version
+      # Update dependencies
+      - run: flutter pub outdated
+      # Update pubspec.yaml and run pub get based on update results (not shown here)
       - run: flutter pub get
       - run: flutter test
-      - run: sh web_test.sh
+      - run: sh web_test.sh  # Potentially modified script
       - run: flutter build web --base-href /${{ github.event.repository.name }}/
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
