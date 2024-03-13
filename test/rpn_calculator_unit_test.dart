@@ -34,6 +34,7 @@ void main() {
       expect(calculator.stack.last, equals(8));
     });
 
+
     test('should divide two values', () {
       final calculator = RPNCalculator();
       calculator.push(8);
