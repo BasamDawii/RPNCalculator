@@ -1,43 +1,89 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
-import 'package:calculator/main.dart'as app;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:calculator/main.dart';
 
 void main() {
-  testWidgets('Test RPN Calculator', (WidgetTester tester) async {
-    // Start the app
-    app.main();
+  group('RPN Calculator Integration Tests', () {
+    testWidgets('should allow entering values and perform subtraction', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
 
-    // Wait for the app to render
-    await tester.pumpAndSettle();
+      // Enter '5'
+      await tester.enterText(find.byType(TextField), '5');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
 
-    // Test user interactions and verify results
-    // Example:
-    // Tap the button '1'
-    await tester.tap(find.text('1'));
-    await tester.pump();
+      // Enter '3'
+      await tester.enterText(find.byType(TextField), '3');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
 
-    // Verify that '1' is displayed in the first input field
-    expect(find.text('1'), findsOneWidget);
+      // Perform subtraction
+      await tester.tap(find.text('-'));
+      await tester.pump();
 
-    // Tap the button '+'
-    await tester.tap(find.text('+'));
-    await tester.pump();
+      // Verify the stack displays '2'
+      expect(find.text('2.0'), findsOneWidget);
+    });
 
-    // Tap the button '2'
-    await tester.tap(find.text('2'));
-    await tester.pump();
+    testWidgets('should allow entering values and perform multiplication', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
 
-    // Verify that '2' is displayed in the second input field
-    expect(find.text('2'), findsOneWidget);
+      // Enter '4'
+      await tester.enterText(find.byType(TextField), '4');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
 
-    // Tap the button 'Enter'
-    await tester.tap(find.text('Enter'));
-    await tester.pump();
+      // Enter '5'
+      await tester.enterText(find.byType(TextField), '5');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
 
-    // Verify that the result is displayed correctly
-    expect(find.text('3'), findsOneWidget);
+      // Perform multiplication
+      await tester.tap(find.text('×'));
+      await tester.pump();
+
+      // Verify the stack displays '20'
+      expect(find.text('20.0'), findsOneWidget);
+    });
+
+    testWidgets('should allow entering values and perform division', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+
+      // Enter '10'
+      await tester.enterText(find.byType(TextField), '10');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      // Enter '2'
+      await tester.enterText(find.byType(TextField), '2');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      // Perform division
+      await tester.tap(find.text('÷'));
+      await tester.pump();
+
+      // Verify the stack displays '5'
+      expect(find.text('5.0'), findsOneWidget);
+    });
+
+    testWidgets('should clear the stack when Clear is pressed', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+
+      // Enter '10'
+      await tester.enterText(find.byType(TextField), '10');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pump();
+
+      // Ensure '10' is displayed
+      expect(find.text('10.0'), findsOneWidget);
+
+      // Press Clear
+      await tester.tap(find.text('Clear'));
+      await tester.pump();
+
+      // Verify the stack is cleared and '10' is no longer displayed
+      expect(find.text('10.0'), findsNothing);
+    });
   });
 }
